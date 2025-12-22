@@ -1,0 +1,33 @@
+<div class="card student-card border-0 shadow-sm">
+    <div class="card-header bg-dark text-white p-3">
+        <h5 class="mb-0 fw-bold text-center">Личная карточка студента</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="mb-4">
+            <p class="mb-1 text-muted small">ФИО студента:</p>
+            <h5 class="fw-bold">{{ student.surname }} {{ student.first_name }} {{ student.patronymic }}</h5>
+
+            <p class="mb-1 text-muted small mt-3">Учебная группа:</p>
+            <h6 class="fw-bold">{{ student.group.name }} <span class="text-muted fw-normal">(Поступление: {{ student.group.admission_year }})</span></h6>
+        </div>
+
+        <table class="table table-sm table-hover border">
+            <thead class="table-light">
+                <tr>
+                    <th class="ps-2">Дисциплина</th>
+                    <th class="text-center">Сем.</th>
+                    <th class="text-center">Оценка</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in grades %}
+                <tr>
+                    <td class="ps-2 small">{{ record.discipline.name }}</td>
+                    <td class="text-center small">{{ record.semester.number }}</td>
+                    <td class="text-center fw-bold">{{ record.grade|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

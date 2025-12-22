@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white p-3">
+                    <h5 class="mb-0 fw-bold">Назначение преподавателя</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <p class="mb-1 text-muted small text-uppercase fw-bold">Дисциплина</p>
+                        <h5 class="fw-bold text-dark">{{ discipline.name }}</h5>
+                        <p class="mb-1 text-muted small text-uppercase fw-bold mt-3">Учебная группа</p>
+                        <h5 class="fw-bold text-dark">{{ group.name }}</h5>
+                    </div>
+                    <hr>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Выберите преподавателя из списка:</label>
+                            {{ form.teacher }}
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'group_selection_for_discipline' discipline.id %}" class="btn btn-light px-4">Отмена</a>
+                            <button type="submit" class="btn btn-success px-4 shadow-sm">
+                                Подтвердить назначение
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

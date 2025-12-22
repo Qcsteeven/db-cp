@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">Ведомость дисциплины</h3>
+            <p class="mb-0 text-muted">
+                {{ discipline.name }} | Группа {{ group.name }} | Семестр {{ discipline.semester.number }}
+            </p>
+        </div>
+        {% if user.role == 2 %}
+            <span class="badge bg-info text-dark px-3 py-2">Режим просмотра</span>
+        {% endif %}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="card shadow-sm overflow-hidden">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">ФИО студента</th>
+                        <th style="width: 250px;" class="pe-4">Оценка</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    {% for item in grades %}
+                    <tr>
+                        <td class="ps-4 fw-medium">{{ item.student.surname }} {{ item.student.first_name }}</td>
+                        <td class="pe-4">
+                            <select name="grade_{{ item.id }}" class="form-select" {% if user.role == 2 %}disabled{% endif %}>
+                                <option value="0" {% if item.grade == 0 %}selected{% endif %}>Не выставлено</option>
+                                <option value="5" {% if item.grade == 5 %}selected{% endif %}>5 (Отлично)</option>
+                                <option value="4" {% if item.grade == 4 %}selected{% endif %}>4 (Хорошо)</option>
+                                <option value="3" {% if item.grade == 3 %}selected{% endif %}>3 (Удовл.)</option>
+                                <option value="2" {% if item.grade == 2 %}selected{% endif %}>2 (Неуд.)</option>
+                            </select>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="card-footer bg-light p-3 d-flex justify-content-between">
+                <a href="{% url 'group_selection_for_discipline' discipline.id %}" class="btn btn-secondary px-4">Назад</a>
+                {% if user.role != 2 %}
+                    <button type="submit" class="btn btn-primary px-4">Сохранить изменения</button>
+                {% else %}
+                    <small class="text-muted align-self-center">* Редактирование доступно только преподавателю</small>
+                {% endif %}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

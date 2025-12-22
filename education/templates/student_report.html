@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
+        <a href="{% url 'course_selection' student.id %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к выбору курса
+        </a>
+        <button onclick="window.print()" class="btn btn-dark px-4 shadow-sm">
+            <i class="bi bi-printer me-2"></i> Печать карточки
+        </button>
+    </div>
+
+    <div class="card shadow-lg p-5 bg-white border-0" id="report-paper">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Личная карточка студента</h2>
+            <h5 class="text-muted">
+                Данные за {{ course }} курс (семестры {{ sem_start }} и {{ sem_end }})
+            </h5>
+            <div class="border-bottom border-dark border-2 w-25 mx-auto mt-3"></div>
+        </div>
+
+        <div class="row mb-5 fs-5">
+            <div class="col-md-7">
+                <p class="mb-2"><strong>Студент:</strong> {{ student.surname }} {{ student.first_name }} {{ student.patronymic }}</p>
+                <p class="mb-2">
+                    <strong>Группа:</strong> {{ student.group.name }}
+                </p>
+            </div>
+            <div class="col-md-5 text-md-end">
+                <p class="mb-2"><strong>Специальность:</strong> {{ student.group.specialty.code }}</p>
+                <p class="mb-2">{{ student.group.specialty.name }}</p>
+            </div>
+        </div>
+
+        <table class="table table-bordered border-dark align-middle mb-4">
+            <thead class="table-light border-dark">
+                <tr class="text-center">
+                    <th style="width: 10%;">Сем.</th>
+                    <th>Дисциплина</th>
+                    <th style="width: 25%;">Вид контроля</th>
+                    <th style="width: 15%;">Оценка</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                <tr>
+                    <td class="text-center">{{ grade.semester.number }}</td>
+                    <td class="ps-3">{{ grade.discipline.name }}</td>
+                    <td class="text-center">{{ grade.discipline.exam_type }}</td>
+                    <td class="text-center fw-bold {% if grade.grade < 3 %}text-danger{% endif %}">
+                        {% if grade.grade == 0 %}—{% else %}{{ grade.grade }}{% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">Информации об оценках не найдено</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            {% if average_grade %}
+            <tfoot class="table-light border-dark">
+                <tr>
+                    <td colspan="3" class="text-end fw-bold py-3 pe-4">Средний балл за курс:</td>
+                    <td class="text-center fw-bold text-primary py-3 fs-5">
+                        {{ average_grade|floatformat:2 }}
+                    </td>
+                </tr>
+            </tfoot>
+            {% endif %}
+        </table>
+
+        <div class="row mt-5 pt-5">
+            <div class="col-6">
+                <div class="border-bottom border-dark w-75 mb-1" style="height: 40px;"></div>
+                <small class="text-muted">(Подпись ответственного лица дирекции)</small>
+            </div>
+            <div class="col-6 text-end d-flex flex-column justify-content-end">
+                <p class="mb-0">Дата формирования: <strong>{% now "d.m.Y" %}</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .navbar, .d-print-none, .btn { display: none !important; }
+        body { background: white !important; }
+        .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+        .card { box-shadow: none !important; padding: 0 !important; border: none !important; }
+        #report-paper { padding: 0 !important; }
+    }
+</style>
+{% endblock %}

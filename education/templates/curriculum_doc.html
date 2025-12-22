@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    @media print {
+        nav, header, footer, .navbar {
+            display: none !important;
+        }
+        .container {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .card {
+            box-shadow: none !important;
+            border: 1px solid #000 !important;
+        }
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Общий учебный план</h2>
+        <p class="text-muted">Сформировано автоматически системой управления учебным процессом</p>
+        <hr class="border-dark opacity-100" style="border-width: 2px;">
+    </div>
+
+    {% for spec in specialties %}
+    <div class="mb-5 pb-3">
+        <h4 class="fw-bold text-primary mb-3">
+            Специальность: <span class="text-dark">{{ spec.name }} ({{ spec.code }})</span>
+        </h4>
+        <div class="card shadow-sm border-0">
+            <table class="table table-bordered table-striped align-middle mb-0 border-light">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 50%" class="ps-3">Наименование дисциплины</th>
+                        <th class="text-center">Часы</th>
+                        <th class="text-center">Тип контроля</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for discipline in spec.discipline_set.all %}
+                    <tr>
+                        <td class="ps-3 fw-medium">{{ discipline.name }}</td>
+                        <td class="text-center">{{ discipline.hours }}</td>
+                        <td class="text-center">{{ discipline.exam_type }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-3">Дисциплины еще не назначены</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="mt-4 d-flex gap-2 d-print-none mb-5">
+        <button onclick="window.print()" class="btn btn-success px-4">
+            <i class="bi bi-printer me-2"></i> Печать документа
+        </button>
+        <a href="{% url 'main' %}" class="btn btn-outline-primary px-4">Вернуться</a>
+    </div>
+</div>
+{% endblock %}

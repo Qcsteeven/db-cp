@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold">Выбор дисциплины</h3>
+            <p class="text-muted small mb-0">
+                {% if user.role == 3 %}
+                    Дисциплины, закрепленные за вами для выставления оценок
+                {% else %}
+                    Выберите дисциплину для управления учебным процессом
+                {% endif %}
+            </p>
+        </div>
+        <a href="{% url 'main' %}" class="btn btn-outline-secondary">В главное меню</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for discipline in disciplines %}
+        <div class="col">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="badge bg-light text-primary border border-primary">{{ discipline.specialty.code }}</span>
+                        <span class="text-muted small">Семестр: {{ discipline.semester.number }}</span>
+                    </div>
+                    <h5 class="card-title fw-bold text-dark">{{ discipline.name }}</h5>
+                    <p class="card-text small text-muted">{{ discipline.specialty.name }}</p>
+                    <div class="mt-3 p-2 bg-light rounded-2 small">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Объем:</span><strong>{{ discipline.hours }} ч.</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Контроль:</span><strong>{{ discipline.exam_type }}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3">
+                    <a href="{% url 'group_selection_for_discipline' discipline.id %}"
+                       class="btn {% if user.role == 3 %}btn-success{% else %}btn-primary{% endif %} w-100 shadow-sm">
+                        {% if user.role == 3 %}Выставить оценки{% else %}Выбрать{% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-search fs-1 text-muted"></i>
+            <p class="mt-3 text-muted">Дисциплины не найдены.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

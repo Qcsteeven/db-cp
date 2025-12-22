@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card mb-4 shadow-sm border-0 d-print-none">
+        <div class="card-body bg-light">
+            <form method="get" class="row g-3 align-items-center justify-content-center">
+                <div class="col-auto">
+                    <label class="fw-bold me-2">Выберите семестр для просмотра:</label>
+                </div>
+                <div class="col-auto">
+                    <select name="semester" class="form-select" onchange="this.form.submit()">
+                        {% for i in "12345678"|make_list %}
+                            <option value="{{ forloop.counter }}" {% if semester|stringformat:"s" == forloop.counter|stringformat:"s" %}selected{% endif %}>
+                                Семестр № {{ forloop.counter }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-primary px-4">Обновить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-lg border-0 bg-white">
+        <div class="card-body p-5">
+            <div class="text-center mb-5">
+                <h3 class="fw-bold mb-1">Формы контроля обучения</h3>
+                <h5 class="text-muted">Учебный семестр № {{ semester }}</h5>
+                <div class="border-bottom border-dark border-2 w-25 mx-auto mt-3"></div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr class="text-center">
+                            <th style="width: 30%;">Направление (Специальность)</th>
+                            <th>Экзамены</th>
+                            <th>Зачеты</th>
+                            <th>Курсовые работы</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for spec_name, forms in grouped_data.items %}
+                        <tr>
+                            <td class="fw-bold bg-light">{{ spec_name }}</td>
+                            <td class="ps-3">
+                                {% for item in forms.exams %}
+                                    <div>• {{ item }}</div>
+                                {% empty %}<span class="text-muted small">Не предусмотрено</span>{% endfor %}
+                            </td>
+                            <td class="ps-3">
+                                {% for item in forms.tests %}
+                                    <div>• {{ item }}</div>
+                                {% empty %}<span class="text-muted small">Не предусмотрено</span>{% endfor %}
+                            </td>
+                            <td class="ps-3">
+                                {% for item in forms.course_works %}
+                                    <div>• {{ item }}</div>
+                                {% empty %}<span class="text-muted small">Не предусмотрено</span>{% endfor %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted">Нет данных для выбранного семестра</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-5 d-flex gap-2 d-print-none">
+                <button class="btn btn-dark px-4" onclick="window.print()">
+                    <i class="bi bi-printer me-2"></i> Печать документа
+                </button>
+                <a href="{% url 'main' %}" class="btn btn-outline-secondary">Вернуться на главную</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .navbar, .d-print-none { display: none !important; }
+        body { background: white !important; }
+        .card { box-shadow: none !important; border: none !important; }
+        .container { width: 100% !important; max-width: none !important; margin: 0; }
+    }
+</style>
+{% endblock %}

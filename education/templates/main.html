@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Главное меню приложения</h2>
+            <p class="text-muted mb-0">Пользователь: <strong>{{ user.surname }} {{ user.first_name }}</strong></p>
+        </div>
+        <span class="badge bg-secondary px-3 py-2">ID Роли: {{ user.role }}</span>
+    </div>
+
+    <div class="row g-4">
+        {% if user.role|stringformat:"s" == "1" %}
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-top border-primary border-4">
+                    <div class="card-body py-4 text-center">
+                        <i class="bi bi-mortarboard fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title fw-bold">Управление специальностями</h5>
+                        <p class="text-muted small">Редактирование списка направлений и дисциплин.</p>
+                        <a href="{% url 'specialties_list' %}" class="btn btn-primary mt-3 px-4">Открыть</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-top border-info border-4">
+                    <div class="card-body py-4 text-center">
+                        <i class="bi bi-file-earmark-text fs-1 text-info mb-3"></i>
+                        <h5 class="card-title fw-bold">Учебный план</h5>
+                        <p class="text-muted small">Формирование полного документа учебного плана по специальностям.</p>
+                        <a href="{% url 'curriculum_doc' %}" class="btn btn-info text-white mt-3 px-4">Сформировать</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-top border-secondary border-4">
+                    <div class="card-body py-4 text-center">
+                        <i class="bi bi-clipboard-check fs-1 text-secondary mb-3"></i>
+                        <h5 class="card-title fw-bold">Формы контроля</h5>
+                        <p class="text-muted small">Список экзаменов и зачетов по выбранному семестру.</p>
+                        <a href="{% url 'control_forms' %}" class="btn btn-secondary mt-3 px-4">Сформировать</a>
+                    </div>
+                </div>
+            </div>
+
+        {% elif user.role|stringformat:"s" == "2" %}
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-top border-success border-4">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-people fs-1 text-success mb-3"></i>
+                        <h5 class="fw-bold">Работа со студентами</h5>
+                        <p class="text-muted small">Поиск студента и формирование личной карточки.</p>
+                        <a href="{% url 'students_search' %}" class="btn btn-success px-4">Выбор студента</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 shadow-sm border-top border-primary border-4">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-journal-text fs-1 text-primary mb-3"></i>
+                        <h5 class="fw-bold">Учебный процесс</h5>
+                        <p class="text-muted small">Управление группами и назначение преподавателей.</p>
+                        <a href="{% url 'discipline_selection' %}" class="btn btn-primary px-4">Выбор дисциплины</a>
+                    </div>
+                </div>
+            </div>
+
+        {% elif user.role|stringformat:"s" == "3" %}
+            <div class="col-md-6 mx-auto">
+                <div class="card shadow-sm border-top border-warning border-4">
+                    <div class="card-body p-5 text-center">
+                        <i class="bi bi-pencil-square fs-1 text-warning mb-3"></i>
+                        <h5 class="fw-bold">Преподавательская деятельность</h5>
+                        <p class="text-muted">Заполнение ведомостей и просмотр групп.</p>
+                        <a href="{% url 'discipline_selection' %}" class="btn btn-warning px-5">Перейти к дисциплинам</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

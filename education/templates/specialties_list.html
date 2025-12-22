@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Окно управления специальностями</h2>
+        <a href="{% url 'main' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-house-door"></i> Вернуться в главное меню
+        </a>
+    </div>
+
+    <div class="card mb-4 shadow-sm border-0 bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Добавить новую специальность</h5>
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-md-3"><input type="text" name="code" class="form-control" placeholder="Код (напр. 09.03.01)" required></div>
+                <div class="col-md-6"><input type="text" name="name" class="form-control" placeholder="Название специальности" required></div>
+                <div class="col-md-3"><button type="submit" name="add_specialty" class="btn btn-success w-100">Добавить</button></div>
+            </form>
+        </div>
+    </div>
+
+    <table class="table table-hover align-middle shadow-sm bg-white">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 15%;">Код</th>
+                <th>Специальность (нажмите для перехода к дисциплинам)</th>
+                <th style="width: 250px;">Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for specialty in specialties %}
+            <tr>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="specialty_id" value="{{ specialty.id }}">
+                    <td><input type="text" name="code" value="{{ specialty.code }}" class="form-control form-control-sm"></td>
+                    <td>
+                        <a href="{% url 'disciplines_list' %}?specialty={{ specialty.id }}" class="fw-bold text-decoration-none text-primary">
+                             {{ specialty.name }} <i class="bi bi-box-arrow-up-right small"></i>
+                        </a>
+                        <input type="text" name="name" value="{{ specialty.name }}" class="form-control form-control-sm mt-1">
+                    </td>
+                    <td>
+                        <div class="btn-group w-100">
+                            <button type="submit" name="edit_specialty" class="btn btn-primary btn-sm">Сохранить</button>
+                            <button type="submit" name="delete_specialty" class="btn btn-danger btn-sm" onclick="return confirm('Вы уверены?')">Удалить</button>
+                        </div>
+                    </td>
+                </form>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
