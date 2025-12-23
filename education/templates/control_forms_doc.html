@@ -28,7 +28,12 @@
             <div class="text-center mb-5">
                 <h3 class="fw-bold mb-1">Формы контроля обучения</h3>
                 <h5 class="text-muted">Учебный семестр № {{ semester }}</h5>
-                <div class="border-bottom border-dark border-2 w-25 mx-auto mt-3"></div>
+
+                <p class="small text-secondary mt-2">
+                    Дата формирования отчета: {% now "d.m.Y H:i" %}
+                </p>
+
+                <div class="border-bottom border-dark border-2 w-25 mx-auto mt-2"></div>
             </div>
 
             <div class="table-responsive">
@@ -70,6 +75,13 @@
                 </table>
             </div>
 
+            <div class="mt-5 d-none d-print-block">
+                <div class="d-flex justify-content-between mt-5">
+                    <p>Ответственное лицо: ________________ / ________________</p>
+                    <p>М.П.</p>
+                </div>
+            </div>
+
             <div class="mt-5 d-flex gap-2 d-print-none">
                 <button class="btn btn-dark px-4" onclick="window.print()">
                     <i class="bi bi-printer me-2"></i> Печать документа
@@ -85,7 +97,8 @@
         .navbar, .d-print-none { display: none !important; }
         body { background: white !important; }
         .card { box-shadow: none !important; border: none !important; }
-        .container { width: 100% !important; max-width: none !important; margin: 0; }
+        .container { width: 100% !important; max-width: none !important; margin: 0; padding: 0; }
+        .table-light { background-color: #f8f9fa !important; }
     }
 </style>
 {% endblock %}
