@@ -12,6 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         User = get_user_model()
 
+        # Создание суперпользователя (Регистратор)
         username = os.getenv("DJANGO_SUPERUSER_USERNAME", "registrar")
         if not User.objects.filter(username=username).exists():
             User.objects.create_superuser(
@@ -27,6 +28,7 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f'Суперпользователь "{username}" создан.')
             )
 
+        # Список системных пользователей
         system_users = [
             {
                 "username": "directorate",
@@ -37,12 +39,20 @@ class Command(BaseCommand):
                 "patronymic": "Института",
             },
             {
-                "username": "teacher",
+                "username": "teacher_petrov",
                 "password": "password123",
                 "role": 3,
                 "surname": "Петров",
                 "first_name": "Иван",
                 "patronymic": "Сергеевич",
+            },
+            {
+                "username": "teacher_sidorov",
+                "password": "password123",
+                "role": 3,
+                "surname": "Сидоров",
+                "first_name": "Алексей",
+                "patronymic": "Николаевич",
             },
         ]
 
@@ -54,7 +64,7 @@ class Command(BaseCommand):
                     "surname": u_data["surname"],
                     "first_name": u_data["first_name"],
                     "patronymic": u_data["patronymic"],
-                    "is_staff": True,
+                    "is_staff": True, 
                 },
             )
             if created:
@@ -70,6 +80,6 @@ class Command(BaseCommand):
 
                 self.stdout.write(
                     self.style.SUCCESS(
-                        f'Пользователь "{user.username}" (ФИО: {user.surname} {user.first_name}) создан.'
+                        f'Пользователь "{user.username}" (Роль: {user.role}, ФИО: {user.surname} {user.first_name}) создан.'
                     )
                 )

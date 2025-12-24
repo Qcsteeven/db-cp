@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 },
                 {
                     "name": "Программирование Python",
-                    "type": "Зачет",
+                    "type": "Зачёт",
                     "hours": 72,
                     "sem": 3,
                     "specs": [is_it, is_is],
@@ -86,7 +86,7 @@ class Command(BaseCommand):
                 },
                 {
                     "name": "Правоведение",
-                    "type": "Зачет",
+                    "type": "Зачёт",
                     "hours": 36,
                     "sem": 5,
                     "specs": [is_it],
@@ -143,13 +143,18 @@ class Command(BaseCommand):
                             teacher_main if "Математика" in disc.name else teacher_sec
                         )
 
+                        if disc.exam_type == "Зачёт":
+                            random_grade = random.choice([2, 5])
+                        else:
+                            random_grade = random.choice([3, 4, 5])
+
                         _, g_created = GradeSheet.objects.get_or_create(
                             student=student,
                             discipline=disc,
                             semester=disc.semester,
                             defaults={
                                 "teacher": current_t,
-                                "grade": random.choice([3, 4, 5]),
+                                "grade": random_grade,
                                 "date": date.today(),
                             },
                         )
