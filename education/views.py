@@ -65,62 +65,98 @@ def disciplines_list(request):
     semesters = Semester.objects.all().order_by("number")
 
     if request.method == "POST":
+        # Извлекаем общие данные для проверок
+        name = request.POST.get("name")
+        exam_type = request.POST.get("exam_type")
+        semester_id = request.POST.get("semester_id")
         raw_hours = request.POST.get("hours")
+
         try:
             hours_val = int(raw_hours) if raw_hours else 0
         except ValueError:
             hours_val = -1
 
         if "add_discipline" in request.POST:
-            name = request.POST.get("name")
             if hours_val <= 0:
                 messages.error(
                     request, "Ошибка: Количество часов должно быть больше нуля."
                 )
+
+            elif Discipline.objects.filter(
+                name=name,
+                exam_type=exam_type,
+                hours=hours_val,
+                semester_id=semester_id,
+                specialty=specialty,
+            ).exists():
+                messages.error(
+                    request,
+                    f"Ошибка: Дисциплина '{name}' с точно такими же данными уже существует в этом семестре.",
+                )
+
             else:
                 Discipline.objects.create(
                     name=name,
-                    exam_type=request.POST.get("exam_type"),
+                    exam_type=exam_type,
                     hours=hours_val,
                     specialty=specialty,
-                    semester_id=request.POST.get("semester_id"),
+                    semester_id=semester_id,
                 )
                 messages.success(request, f"Дисциплина '{name}' добавлена.")
 
         elif "edit_discipline" in request.POST:
             disc = get_object_or_404(Discipline, id=request.POST.get("discipline_id"))
 
-            # ВАЛИДАЦИЯ: Проверка при редактировании
             if hours_val <= 0:
                 messages.error(
                     request,
                     f"Ошибка обновления: для дисциплины '{disc.name}' указано некорректное время.",
                 )
+            elif (
+                Discipline.objects.filter(
+                    name=name,
+                    exam_type=exam_type,
+                    hours=hours_val,
+                    semester_id=semester_id,
+                    specialty=specialty,
+                )
+                .exclude(id=disc.id)
+                .exists()
+            ):
+                messages.error(
+                    request,
+                    f"Ошибка: Невозможно обновить. Дисциплина с такими параметрами уже существует.",
+                )
+
             else:
-                disc.name = request.POST.get("name")
-                disc.exam_type = request.POST.get("exam_type")
+                disc.name = name
+                disc.exam_type = exam_type
                 disc.hours = hours_val
-                disc.semester_id = request.POST.get("semester_id")
+                disc.semester_id = semester_id
                 disc.save()
                 messages.info(request, f"Дисциплина '{disc.name}' обновлена.")
 
         elif "delete_discipline" in request.POST:
             disc = get_object_or_404(Discipline, id=request.POST.get("discipline_id"))
-            name = disc.name
+            name_deleted = disc.name
             disc.delete()
-            messages.warning(request, f"Дисциплина '{name}' удалена.")
+            messages.warning(request, f"Дисциплина '{name_deleted}' удалена.")
 
         return redirect(
             f"{request.path}?specialty={specialty_id}" if specialty_id else request.path
         )
 
     if specialty:
-        disciplines = Discipline.objects.filter(specialty=specialty).select_related(
-            "semester"
+        disciplines = (
+            Discipline.objects.filter(specialty=specialty)
+            .select_related("semester")
+            .order_by("semester__number", "name")
         )
         title = f"Дисциплины: {specialty.name}"
     else:
-        disciplines = Discipline.objects.all().select_related("semester")
+        disciplines = (
+            Discipline.objects.all().select_related("semester").order_by("name")
+        )
         title = "Все дисциплины"
 
     return render(
